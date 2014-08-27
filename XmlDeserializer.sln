@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlDeserializer", "XmlDeserializer\XmlDeserializer.csproj", "{BBA71052-4DC6-4628-92DD-18C1268F9E4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlDeserializer.Tests", "XmlDeserializer.Tests\XmlDeserializer.Tests.csproj", "{767125D9-50E1-4FD6-81D6-0A019354B4A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlDeserializer.Tests", "XmlDeserializer.Tests\XmlDeserializer.Tests.csproj", "{98C59AB2-F1AD-4036-BE95-5B8CBC3096FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{BBA71052-4DC6-4628-92DD-18C1268F9E4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA71052-4DC6-4628-92DD-18C1268F9E4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBA71052-4DC6-4628-92DD-18C1268F9E4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{767125D9-50E1-4FD6-81D6-0A019354B4A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{767125D9-50E1-4FD6-81D6-0A019354B4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{767125D9-50E1-4FD6-81D6-0A019354B4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{767125D9-50E1-4FD6-81D6-0A019354B4A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98C59AB2-F1AD-4036-BE95-5B8CBC3096FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98C59AB2-F1AD-4036-BE95-5B8CBC3096FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98C59AB2-F1AD-4036-BE95-5B8CBC3096FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98C59AB2-F1AD-4036-BE95-5B8CBC3096FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
