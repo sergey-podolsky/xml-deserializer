@@ -87,14 +87,10 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Flags] // can be deserialized in the same way as collections
         public enum SqlPrivilege
         {
-            [Synonyms("Create")]
-            Insert,
-            [Synonyms("Read", "Retrieve")]
-            Select,
-            [Synonyms("Update", "Modify")]
-            Update,
-            [Synonyms("Delete", "Destroy")]
-            Delete
+            [Synonyms("Create")] Insert,
+            [Synonyms("Read", "Retrieve")] Select,
+            [Synonyms("Update", "Modify")] Update,
+            [Synonyms("Delete", "Destroy")] Delete
         }
     }
 }
