@@ -1,0 +1,47 @@
+﻿<employee>
+  <name>Elizabeth Jones</name>
+
+  <birthday>16-03-1989</birthday>
+
+  <mailing_address zip='01001' country='Ukraine' city='Kiev' street_address='1, Independence Square'/>
+
+  <gender>female</gender>
+
+  <system_privileges>
+    <privilege>insert</privilege>
+    <privilege>read</privilege>
+    <privilege>modify</privilege>
+  </system_privileges>
+
+  <!-- list of employees -->
+  <subordinates>
+    <subordinate>
+      <name>Bob Dickson</name>
+    </subordinate>
+    <subordinate>
+      <name>John Smith</name>
+      <gender>Female</gender>
+    </subordinate>
+  </subordinates>
+
+  <line_manager link='C://employees/ceo.xml'/>
+
+  <contact_info>
+    <email>john.smith@gmail.com</email>
+    <phone>+380975459716</phone>
+    <skype>john.smith</skype>
+  </contact_info>
+
+  <!-- years per skill -->
+  <skills>
+    <languages csharp='8' java='2' python='1'/>
+    <office word='7' excel='1'/>
+  </skills>
+
+  <spoken_languages>English, Ukrainian ,German</spoken_languages>
+
+  <personal_details>
+    Marital Status= Single;
+    Interests = programming, movies, cycling;
+  </personal_details>
+</employee>
