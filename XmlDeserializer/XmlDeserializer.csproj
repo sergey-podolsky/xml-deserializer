@@ -43,19 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractDictionaryAttribute.cs" />
-    <Compile Include="ConstructorAttribute.cs" />
-    <Compile Include="DeserializableAttribute.cs" />
+    <Compile Include="Attributes\AbstractDictionaryAttribute.cs" />
+    <Compile Include="Attributes\ConstructorAttribute.cs" />
+    <Compile Include="Attributes\DeserializableAttribute.cs" />
     <Compile Include="Deserializer.cs" />
-    <Compile Include="DictionaryAttribute.cs" />
+    <Compile Include="Attributes\DictionaryAttribute.cs" />
     <Compile Include="IDeserializer.cs" />
-    <Compile Include="InlineCollectionAttribute.cs" />
-    <Compile Include="InlineDictionaryAttribute.cs" />
-    <Compile Include="ItemAttribute.cs" />
+    <Compile Include="Attributes\InlineCollectionAttribute.cs" />
+    <Compile Include="Attributes\InlineDictionaryAttribute.cs" />
+    <Compile Include="Attributes\ItemAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SynonymsAttribute.cs" />
-    <Compile Include="UriAttribute.cs" />
-    <Compile Include="XPathAttribute.cs" />
+    <Compile Include="Attributes\UriAttribute.cs" />
+    <Compile Include="Attributes\XPathAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

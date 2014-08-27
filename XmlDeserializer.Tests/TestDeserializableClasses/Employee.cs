@@ -16,9 +16,17 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "title")]
         public string Title { get; set; }
 
-        // with custom format
+        // default optional value
+        [Item(xpath: "(department, 'Sales')[1]")]
+        public string Department { get; set; }
+
+        // date with custom format
         [Item(xpath: "birthday", Format = "dd-MM-yyyy")]
         public DateTime Birthday { get; set; }
+
+        // bool with custom format
+        [Item(xpath: "contractor", Format = "yes|no")]
+        public bool IsContractor { get; set; }
 
         // nested class 
         [Item(xpath: "mailing_address")]
@@ -28,8 +36,8 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "gender")]
         public Sex Gender { get; set; }
 
-        // enum flags
-        [Item(xpath: "system_privileges/privilege")]
+        // enum flags with custom format
+        [Item(xpath: "system_privileges/privilege", Format = "Create|Read|Update|Delete")]
         public SqlPrivilege SystemPrivileges { get; set; }
 
         // collection (can be empty)
