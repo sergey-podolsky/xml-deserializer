@@ -6,7 +6,7 @@ using System.Text;
 namespace XmlDeserializer.Tests.TestDeserializableClasses
 {
     [Deserializable] // Marks user class as deserializable
-    class Employee
+    internal class Employee
     {
         // mandatory value
         [Item(xpath: "name", IsRequired = true)]
@@ -36,6 +36,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "subordinates/subordinate")]
         public ICollection<Employee> Subordinates { get; set; }
 
+        // 
         [XmlUri(xpath: "line_manager/@link")]
         [Item(xpath: "//Employee")]
         public Employee LineManager { get; set; }

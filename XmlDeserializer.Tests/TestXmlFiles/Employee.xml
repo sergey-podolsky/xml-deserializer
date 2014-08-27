@@ -20,11 +20,11 @@
     </subordinate>
     <subordinate>
       <name>John Smith</name>
-      <gender>Female</gender>
     </subordinate>
   </subordinates>
 
-  <line_manager link='C://employees/ceo.xml'/>
+  <!-- relative link to another employee -->
+  <line_manager link='Ceo.xml'/>
 
   <contact_info>
     <email>john.smith@gmail.com</email>
