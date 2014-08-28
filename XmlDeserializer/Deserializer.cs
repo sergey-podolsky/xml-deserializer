@@ -18,6 +18,8 @@ namespace XmlDeserializer
 
         public DocumentBuilder DocumentBuilder { get; private set; }
 
+        public IDictionary<Type, Type> Converters { get; private set; }
+
         public IFormatProvider FormatProvider { get; set; }
 
         public IXmlNamespaceResolver XmlNamespaceResolver { get; set; }
@@ -26,6 +28,7 @@ namespace XmlDeserializer
         {
             this.Processor = new Processor();
             this.DocumentBuilder = this.Processor.NewDocumentBuilder();
+            this.Converters = new Dictionary<Type, Type>();
         }
 
         public void Deserialize(XdmItem xdmItem, string xpath, ref object deserializable)

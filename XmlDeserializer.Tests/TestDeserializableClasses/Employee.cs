@@ -5,6 +5,10 @@ using System.Text;
 
 namespace XmlDeserializer.Tests.TestDeserializableClasses
 {
+    using System.Text.RegularExpressions;
+
+    using Saxon.Api;
+
     [Deserializable] // Marks user class as deserializable
     internal class Employee
     {
@@ -13,8 +17,8 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public string Name { get; set; }
 
         // optional value
-        [Item(xpath: "title")]
-        public string Title { get; set; }
+        [Item(xpath: "age")]
+        public uint? Age { get; set; }
 
         // default optional value
         [Item(xpath: "(department, 'Sales')[1]")]
@@ -28,7 +32,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "contractor", Format = "yes|no")]
         public bool IsContractor { get; set; }
 
-        // nested class 
+        // nested class
         [Item(xpath: "mailing_address")]
         public Address MailingAddress { get; set; }
 
@@ -44,9 +48,8 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "subordinates/subordinate")]
         public ICollection<Employee> Subordinates { get; set; }
 
-        // 
-        [XmlUri(xpath: "line_manager/@link")]
-        [Item(xpath: "//Employee")]
+        // value from another XML with URI that can be retrieved from current XML by given XPath
+        [Item(xpath: "//Employee", XmlUriXPath = "line_manager/@link")]
         public Employee LineManager { get; set; }
 
         // dictionary with non-null values
@@ -100,6 +103,30 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
             [Synonyms("Read", "Retrieve")] Select,
             [Synonyms("Update", "Modify")] Update,
             [Synonyms("Delete", "Destroy")] Delete
+        }
+    }
+
+    class YesNoBoolConverter : Converter<bool>
+    {
+        public bool Convert(string value, string format)
+        {
+            if (format != null)
+            {
+                throw new XmlDeserializationException("Format is not applicable");
+            }
+
+            source = source.ToLower();
+            switch (source)
+            {
+                case "yes":
+                    target = true;
+                    break;
+                case "no":
+                    target = false;
+                    break;
+                default:
+                    throw new XmlDeserializationException();
+            }
         }
     }
 }

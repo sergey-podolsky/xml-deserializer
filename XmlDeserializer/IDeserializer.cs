@@ -12,10 +12,6 @@ namespace XmlDeserializer
 
     public interface IDeserializer
     {
-        IFormatProvider FormatProvider { get; set; }
-
-        IXmlNamespaceResolver XmlNamespaceResolver { get; set; }
-
         void Deserialize(XdmItem xdmItem, string xpath, ref object deserializable);
 
         void Deserialize(string xml, string xpath, ref object deserializable);
