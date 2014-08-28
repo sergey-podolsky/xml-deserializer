@@ -14,6 +14,11 @@ namespace XmlDeserializer.AttributeHandlers
     {
         public override void HandleItem(Deserializer deserializer, XdmValue xdmValue, Attribute attribute, Type type, ref object deserializable)
         {
+            if (xdmValue.Count == 0)
+            {
+                return;
+            }
+
             var xdmNode = xdmValue as XdmNode;
             if (xdmNode == null)
             {

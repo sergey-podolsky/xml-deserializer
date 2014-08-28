@@ -5,6 +5,9 @@ using System.Text;
 
 namespace XmlDeserializer.AttributeHandlers
 {
+    using System.Collections;
+    using System.Xml.Schema;
+
     using Saxon.Api;
 
     public abstract class ItemAttributeHandler : IAttributeHandler
@@ -22,7 +25,12 @@ namespace XmlDeserializer.AttributeHandlers
             XdmValue xdmValue = deserializer.XPathCompiler.Evaluate(itemAttribute.XPath, xdmNode);
             if (xdmValue.Count == 0 && itemAttribute.IsRequired)
             {
-                throw new XmlDeserializationException("Value is required but not provided in XML");
+                throw new XmlDeserializationException("Value is required but XPath query returned nothing");
+            }
+
+            if (xdmValue.Count > 1 && !typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                throw new XmlDeserializationException("XPath returned more than one value");
             }
 
             this.HandleItem(deserializer, xdmValue, attribute, type, ref deserializable);

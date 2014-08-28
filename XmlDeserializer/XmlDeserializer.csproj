@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeHandlers\DeserializableHandler.cs" />
-    <Compile Include="AttributeHandlers\SingleItemAttributeHandler.cs" />
+    <Compile Include="AttributeHandlers\ListHandler.cs" />
     <Compile Include="SupportedTypes.cs" />
     <Compile Include="Attributes\AbstractDictionaryAttribute.cs" />
     <Compile Include="Attributes\DeserializableAttribute.cs" />
