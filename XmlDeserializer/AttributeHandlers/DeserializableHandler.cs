@@ -25,6 +25,9 @@ namespace XmlDeserializer.AttributeHandlers
                 var constructor = GetConstructor(type);
                 deserializable = InvokeConstructor(deserializer, xdmNode, constructor);
             }
+
+            DeserializeFields(deserializer, xdmNode, deserializable);
+            DeserializeProperties(deserializer, xdmNode, deserializable);
         }
 
         private static ConstructorInfo GetConstructor(Type type)
@@ -78,12 +81,73 @@ namespace XmlDeserializer.AttributeHandlers
 
                 var peremeterValue = parameter.DefaultValue;
                 var attribute = attributes.Single();
-                var attributeHandler = deserializer.SupportedTypes.Get(parameter.ParameterType, attribute.GetType());
-                attributeHandler.Handle(deserializer, xdmNode, attribute, parameter.ParameterType, ref peremeterValue);
+                var handler = deserializer.SupportedTypes.Get(parameter.ParameterType, attribute.GetType());
+                handler.Handle(deserializer, xdmNode, attribute, parameter.ParameterType, ref peremeterValue);
                 parameterValues.Add(peremeterValue);
             }
 
             return constructor.Invoke(parameterValues.ToArray());
+        }
+
+
+        private static void DeserializeFields(Deserializer deserializer, XdmNode xdmNode, object deserializable)
+        {
+            var fields = deserializable.GetType()
+                .GetFields()
+                .Where(field => field.IsDefined(typeof(XPathAttribute), false))
+                .ToArray();
+
+            foreach (var field in fields)
+            {
+                var attributes = field.GetCustomAttributes(false).OfType<XPathAttribute>().ToArray();
+                if (attributes.Length > 1)
+                {
+                    var error = string.Format(
+                        "Field '{0}' is annotated with more than one attribute deriving from {1}",
+                        field.Name,
+                        typeof(XPathAttribute));
+                    throw new XmlDeserializationException(error);
+                }
+
+                var fieldAttribute = attributes.Single();
+                object value = field.GetValue(deserializable);
+                var handler = deserializer.SupportedTypes.Get(field.FieldType, fieldAttribute.GetType());
+                handler.Handle(deserializer, xdmNode, fieldAttribute, field.FieldType, ref value);
+                field.SetValue(deserializable, value);
+            }
+        }
+
+        private static void DeserializeProperties(Deserializer deserializer, XdmNode xdmNode, object deserializable)
+        {
+            var properties = deserializable
+                .GetType()
+                .GetProperties()
+                .Where(property => property.IsDefined(typeof(XPathAttribute), false))
+                .ToArray();
+
+            foreach (var property in properties)
+            {
+                if (!property.CanWrite)
+                {
+                    throw new XmlDeserializationException("Property " + property.Name + " can not write");
+                }
+
+                var attributes = property.GetCustomAttributes(false).OfType<XPathAttribute>().ToArray();
+                if (attributes.Length > 1)
+                {
+                    var error = string.Format(
+                        "Property '{0}' is annotated with more than one attribute deriving from {1}",
+                        property.Name,
+                        typeof(XPathAttribute));
+                    throw new XmlDeserializationException(error);
+                }
+
+                var propertyAttribute = attributes.Single();
+                object value = property.GetValue(deserializable, null);
+                var handler = deserializer.SupportedTypes.Get(property.PropertyType, propertyAttribute.GetType());
+                handler.Handle(deserializer, xdmNode, propertyAttribute, property.PropertyType, ref value);
+                property.SetValue(deserializable, value, null);
+            }
         }
     }
 }
