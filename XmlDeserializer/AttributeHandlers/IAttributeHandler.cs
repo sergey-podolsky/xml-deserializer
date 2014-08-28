@@ -9,7 +9,7 @@ namespace XmlDeserializer.AttributeHandlers
     public interface IAttributeHandler
     {
         void Handle(
-            IDeserializer deserializer,
+            Deserializer deserializer,
             XdmNode xdmNode,
             Attribute attribute,
             Type type,

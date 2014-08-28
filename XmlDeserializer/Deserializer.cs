@@ -21,6 +21,8 @@ namespace XmlDeserializer
 
         public DocumentBuilder DocumentBuilder { get; private set; }
 
+        public XPathCompiler XPathCompiler { get; private set; }
+
         public SupportedTypes SupportedTypes { get; private set; }
 
         public IFormatProvider FormatProvider { get; set; }
@@ -31,6 +33,7 @@ namespace XmlDeserializer
         {
             this.Processor = new Processor();
             this.DocumentBuilder = this.Processor.NewDocumentBuilder();
+            this.XPathCompiler = this.Processor.NewXPathCompiler();
             this.SupportedTypes = new SupportedTypes();
         }
 

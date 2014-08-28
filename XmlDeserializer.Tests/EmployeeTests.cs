@@ -11,15 +11,14 @@
     [TestClass]
     public class EmployeeTests
     {
-        private static readonly Employee employee = new Employee();
+        private static Employee employee = new Employee();
 
         [ClassInitialize]
         public static void DeserializeEmployee(TestContext testContext)
         {
             employee.ContactInfo = new Dictionary<string, string> { { "icq", "4770307" } };
-            object deserializable = employee;
             var uri = new Uri(Path.GetFullPath("TestXmlFiles/Employee.xml"));
-            new Deserializer().Deserialize(uri, "//employee", ref deserializable);
+            new Deserializer().Deserialize(uri, "//employee", ref employee);
         }
 
         [TestMethod]
