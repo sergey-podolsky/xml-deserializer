@@ -5,8 +5,11 @@ using System.Text;
 
 namespace XmlDeserializer
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Class)]
-    public class Deserializable : Attribute
+    [AttributeUsage(
+        validOn: AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor,
+        AllowMultiple = false,
+        Inherited = false)]
+    public class DeserializableAttribute : Attribute
     {
     }
 }

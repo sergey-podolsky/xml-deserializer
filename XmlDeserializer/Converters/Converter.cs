@@ -9,7 +9,7 @@ namespace XmlDeserializer
 
     public abstract class Converter<T> : ItemAttributeHandler<T>
     {
-        protected abstract T Convert(string value, string format);
+        protected abstract T Convert(string value);
 
         protected override void Convert(Saxon.Api.XdmItem xdmItem, ItemAttribute itemAttribute, ref T deserializable)
         {

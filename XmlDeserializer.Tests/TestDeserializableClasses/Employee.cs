@@ -16,40 +16,36 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "name", IsRequired = true)]
         public string Name { get; set; }
 
-        // optional value
-        [Item(xpath: "age")]
-        public uint? Age { get; set; }
+        // optional value with custom format
+        [Item(xpath: "birtday", Format = "dd-MM-yyyy")]
+        public DateTime? Birthday { get; set; }
 
         // default optional value
-        [Item(xpath: "(department, 'Sales')[1]")]
-        public string Department { get; set; }
+        [Item(xpath: "(birthplace, 'Unknown')[1]")]
+        public string Birthplace { get; set; }
 
-        // date with custom format
-        [Item(xpath: "birthday", Format = "dd-MM-yyyy")]
-        public DateTime Birthday { get; set; }
+        // enum
+        [Item(xpath: "gender")]
+        public Sex Gender { get; set; }
 
-        // bool with custom format
-        [Item(xpath: "contractor", Format = "yes|no")]
+        // enum flags
+        [Item(xpath: "system_privileges/privilege")]
+        public Privilege SystemPrivileges { get; set; }
+
+        // bool value with custom converter
+        [Item(xpath: "contractor", Converter = typeof(YesNoBoolConverter))]
         public bool IsContractor { get; set; }
 
         // nested class
         [Item(xpath: "mailing_address")]
         public Address MailingAddress { get; set; }
 
-        // enum
-        [Item(xpath: "gender")]
-        public Sex Gender { get; set; }
-
-        // enum flags with custom format
-        [Item(xpath: "system_privileges/privilege", Format = "Create|Read|Update|Delete")]
-        public SqlPrivilege SystemPrivileges { get; set; }
-
         // collection (can be empty)
         [Item(xpath: "subordinates/subordinate")]
         public ICollection<Employee> Subordinates { get; set; }
 
         // value from another XML with URI that can be retrieved from current XML by given XPath
-        [Item(xpath: "//Employee", XmlUriXPath = "line_manager/@link")]
+        [Item(xpath: "//employee", XmlUriXPath = "line_manager/@link")]
         public Employee LineManager { get; set; }
 
         // dictionary with non-null values
@@ -57,7 +53,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public Dictionary<string, string> ContactInfo { get; set; }
 
         // dictionary where values are non-empty lists
-        [Dictionary(entryXPath: "skills/*", keyXPath: "name()", valueXPath: "@*/concat(name(), '=', .)", IsValueRequired = true)]
+        [Dictionary(entryXPath: "skills/*", keyXPath: "name()", valueXPath: "@*/concat(name(), ': ', ., ' year(s)')", IsValueRequired = true)]
         public Dictionary<string, List<string>> Skills { get; set; }
 
         // collection of comma separated values
@@ -76,7 +72,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
             public string City { get; private set; }
             public string StreetAddress { get; private set; }
 
-            [Constructor] // tells which constructor to use for instantiation
+            [Deserializable] // tells which constructor to use for instantiation
             public Address(
                 [Item(xpath: "@zip", IsRequired = true)] ulong zipCode,
                 [Item(xpath: "@country", IsRequired = true)] string country,
@@ -97,35 +93,27 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         }
 
         [Flags] // can be deserialized in the same way as collections
-        public enum SqlPrivilege
+        public enum Privilege
         {
-            [Synonyms("Create")] Insert,
-            [Synonyms("Read", "Retrieve")] Select,
-            [Synonyms("Update", "Modify")] Update,
-            [Synonyms("Delete", "Destroy")] Delete
+            Create,
+            Read,
+            Update,
+            Delete
         }
-    }
 
-    class YesNoBoolConverter : Converter<bool>
-    {
-        public bool Convert(string value, string format)
+        private class YesNoBoolConverter : Converter<bool>
         {
-            if (format != null)
+            public bool Convert(string value)
             {
-                throw new XmlDeserializationException("Format is not applicable");
-            }
-
-            source = source.ToLower();
-            switch (source)
-            {
-                case "yes":
-                    target = true;
-                    break;
-                case "no":
-                    target = false;
-                    break;
-                default:
-                    throw new XmlDeserializationException();
+                switch (source.ToLower())
+                {
+                    case "yes":
+                        return true;
+                    case "no":
+                        return false;
+                    default:
+                        throw new Exception("Expected 'yes'/'no' value, but was " + source);
+                }
             }
         }
     }
