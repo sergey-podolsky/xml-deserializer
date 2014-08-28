@@ -25,7 +25,7 @@
         [TestMethod]
         public void Name()
         {
-            Assert.AreEqual("Elizabeth Jones", );
+            Assert.AreEqual("Elizabeth Jones", employee.Name);
         }
 
         [TestMethod]
@@ -92,9 +92,9 @@
             Assert.IsNotNull(employee.ContactInfo);
             Assert.AreEqual(4, employee.ContactInfo.Count);
             Assert.AreEqual("icq", "4770307"); // added in before deserialization
-            Assert.AreEqual("john.smith@gmail.com", employee.ContactInfo["email"])
-            Assert.AreEqual("+380975459716", employee.ContactInfo["phone"])
-            Assert.AreEqual("john.smith", employee.ContactInfo["skype"])
+            Assert.AreEqual("john.smith@gmail.com", employee.ContactInfo["email"]);
+            Assert.AreEqual("+380975459716", employee.ContactInfo["phone"]);
+            Assert.AreEqual("john.smith", employee.ContactInfo["skype"]);
         }
 
         [TestMethod]

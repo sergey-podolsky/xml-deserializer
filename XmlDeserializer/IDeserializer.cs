@@ -12,10 +12,5 @@ namespace XmlDeserializer
 
     public interface IDeserializer
     {
-        void Deserialize(XdmItem xdmItem, string xpath, ref object deserializable);
-
-        void Deserialize(string xml, string xpath, ref object deserializable);
-
-        void Deserialize(Uri uri, string xpath, ref object deserializable);
     }
 }

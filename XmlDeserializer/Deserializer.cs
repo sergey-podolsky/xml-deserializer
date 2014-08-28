@@ -7,10 +7,13 @@ namespace XmlDeserializer
 {
     using System.IO;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Xml;
     using System.Xml.Linq;
 
     using Saxon.Api;
+
+    using XmlDeserializer.AttributeHandlers;
 
     public class Deserializer : IDeserializer
     {
@@ -18,7 +21,7 @@ namespace XmlDeserializer
 
         public DocumentBuilder DocumentBuilder { get; private set; }
 
-        public IDictionary<Type, Type> Converters { get; private set; }
+        public SupportedTypes SupportedTypes { get; private set; }
 
         public IFormatProvider FormatProvider { get; set; }
 
@@ -28,25 +31,22 @@ namespace XmlDeserializer
         {
             this.Processor = new Processor();
             this.DocumentBuilder = this.Processor.NewDocumentBuilder();
-            this.Converters = new Dictionary<Type, Type>();
+            this.SupportedTypes = new SupportedTypes();
         }
 
-        public void Deserialize(XdmItem xdmItem, string xpath, ref object deserializable)
+        public void Deserialize<T>(Uri uri, string xpath, ref T deserializable)
         {
+            XdmNode xdmNode = this.DocumentBuilder.Build(uri);
+            this.Deserialize(xdmNode, xpath, ref deserializable);
         }
 
-        public void Deserialize(string xml, string xpath, ref object deserializable)
+        public void Deserialize<T>(XdmNode xdmItem, string xpath, ref T deserializable)
         {
-            var stringReader = new StringReader(xml);
-            XdmItem xdmItem = this.DocumentBuilder.Build(stringReader);
-            this.Deserialize(xdmItem, xpath, ref deserializable);
-        }
-
-        public void Deserialize(Uri uri, string xpath, ref object deserializable)
-        {
-            var webClient = new WebClient();
-            string xml = webClient.DownloadString(uri);
-            this.Deserialize(xml, xpath, ref deserializable);
+            var attribute = new ItemAttribute(xpath) { IsRequired = true };
+            IAttributeHandler attributeHandler = this.SupportedTypes.Get(typeof(T), attribute.GetType());
+            object box = deserializable;
+            attributeHandler.Handle(this, xdmItem, attribute, typeof(T), ref box);
+            deserializable = (T)box;
         }
     }
 }

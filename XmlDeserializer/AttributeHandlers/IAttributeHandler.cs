@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Saxon.Api;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace XmlDeserializer.Converters
+namespace XmlDeserializer.AttributeHandlers
 {
-    public abstract class XPathAttributeHandler
+    public interface IAttributeHandler
     {
         void Handle(
             IDeserializer deserializer,
             XdmNode xdmNode,
-            XPathAttribute xpathAttribute,
+            Attribute attribute,
             Type type,
             ref object deserializable);
     }

@@ -43,11 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeHandlers.cs" />
+    <Compile Include="AttributeHandlers\DeserializableHandler.cs" />
+    <Compile Include="SupportedTypes.cs" />
     <Compile Include="Attributes\AbstractDictionaryAttribute.cs" />
     <Compile Include="Attributes\DeserializableAttribute.cs" />
     <Compile Include="AttributeHandlers\DictionaryAttributeHandler.cs" />
-    <Compile Include="AttributeHandlers\XPathAttributeHandler.cs" />
+    <Compile Include="AttributeHandlers\IAttributeHandler.cs" />
     <Compile Include="AttributeHandlers\ItemAttributeHandler.cs" />
     <Compile Include="Deserializer.cs" />
     <Compile Include="Attributes\DictionaryAttribute.cs" />
@@ -55,7 +56,7 @@
     <Compile Include="Attributes\InlineCollectionAttribute.cs" />
     <Compile Include="Attributes\InlineDictionaryAttribute.cs" />
     <Compile Include="Attributes\ItemAttribute.cs" />
-    <Compile Include="Converters\Converter.cs" />
+    <Compile Include="AttributeHandlers\CustomConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attributes\XPathAttribute.cs" />
     <Compile Include="XmlDeserializationException.cs" />

@@ -5,7 +5,10 @@ using System.Text;
 
 namespace XmlDeserializer
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter)]
+    [AttributeUsage(
+        validOn: AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter,
+        AllowMultiple = false,
+        Inherited = false)]
     public abstract class XPathAttribute : Attribute
     {
         public string XmlUriXPath { get; set; }

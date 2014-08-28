@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using XmlDeserializer.AttributeHandlers;
 
 namespace XmlDeserializer.Tests.TestDeserializableClasses
 {
     using System.Text.RegularExpressions;
-
     using Saxon.Api;
+    
 
     [Deserializable] // Marks user class as deserializable
     internal class Employee
@@ -101,18 +102,18 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
             Delete
         }
 
-        private class YesNoBoolConverter : Converter<bool>
+        private class YesNoBoolConverter : CustomConverter<bool>
         {
-            public bool Convert(string value)
+            public override bool Convert(string value)
             {
-                switch (source.ToLower())
+                switch (value.ToLower())
                 {
                     case "yes":
                         return true;
                     case "no":
                         return false;
                     default:
-                        throw new Exception("Expected 'yes'/'no' value, but was " + source);
+                        throw new Exception("Expected 'yes'/'no' value, but was " + value);
                 }
             }
         }
