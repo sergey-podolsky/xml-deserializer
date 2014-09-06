@@ -7,7 +7,7 @@ namespace XmlDeserializer.Converter
 {
     using XmlDeserializer.Parsers;
 
-    class ParsableConverter : IConverter
+    public class ParsableConverter : IItemAttributeConverter
     {
         private readonly IParser parser;
 
@@ -16,9 +16,14 @@ namespace XmlDeserializer.Converter
             this.parser = parser;
         }
 
-        public void Convert(Saxon.Api.XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IConverter> getConverter)
+        public void Convert(Saxon.Api.XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IItemAttributeConverter> getConverter)
         {
             value = parser.Parse(xdmValue.Cast<string>().Single());
+        }
+
+        public Type TargetType
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 }

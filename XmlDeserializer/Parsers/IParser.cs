@@ -5,7 +5,7 @@ using System.Text;
 
 namespace XmlDeserializer.Parsers
 {
-    internal interface IParser
+    public interface IParser
     {
         Type TergetType { get; }
 

@@ -33,7 +33,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public Privilege SystemPrivileges { get; set; }
 
         // bool value with custom converter
-        [Item(xpath: "contractor", Parser = typeof(YesNoBoolParser))]
+        [Item(xpath: "contractor", Converter = typeof(YesNoBoolParser))]
         public bool IsContractor { get; set; }
 
         // nested class

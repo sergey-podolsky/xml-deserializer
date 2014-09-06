@@ -11,7 +11,7 @@ namespace XmlDeserializer.Converters
 
     using XmlDeserializer.Converter;
 
-    class DeserializableConverter : IConverter
+    public class DeserializableConverter : IItemAttributeConverter
     {
         public void HandleXPathResult(Deserializer deserializer, XdmValue xdmValue, Attribute attribute, Type type, ref object deserializable)
         {
@@ -147,9 +147,14 @@ namespace XmlDeserializer.Converters
             }
         }
 
-        public void Convert(XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IConverter> getConverter)
+        public void Convert(XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IItemAttributeConverter> getConverter)
         {
             throw new NotImplementedException();
+        }
+
+        public Type TargetType
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 }

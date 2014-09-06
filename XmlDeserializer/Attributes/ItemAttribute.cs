@@ -17,43 +17,28 @@ namespace XmlDeserializer
     public class ItemAttribute : XPathAttribute
     {
         private readonly string xpath;
-        
-        private static Dictionary<Type, IConverter> converters = new Dictionary<Type, IConverter>();
 
-        private readonly XPathExecutable xpathExecutable;
+        public static IDictionary<Type, IItemAttributeConverter> Converters { get; private set; }
 
-        private IParser parser;
-
-        private Type parserType;
+        private Type converter;
 
         public bool IsRequired { get; set; }
 
-        public Type Parser
+        public Type Converter
         {
             get
             {
-                return parserType;
+                return converter;
             }
             set
             {
-                this.parserType = value;
-                if (value == null)
+                if (typeof(IItemAttributeConverter).IsAssignableFrom(value))
                 {
-                    return;
+                    this.converter = value;
                 }
-
-                if (!typeof(IParser).IsAssignableFrom(value))
+                else
                 {
-                    throw new XmlDeserializationException("Parser should implement " + typeof(Parser<>));
-                }
-
-                try
-                {
-                    this.parser = (IParser)Activator.CreateInstance(value);
-                }
-                catch (Exception e)
-                {
-                    throw new XmlDeserializationException(value + " shoud have default constructor without parameters", e);
+                    throw new XmlDeserializationException("Custom converter should implement " + typeof(IItemAttributeConverter));
                 }
             }
         }
@@ -67,39 +52,27 @@ namespace XmlDeserializer
 
         static ItemAttribute()
         {
+            Converters = new Dictionary<Type, IItemAttributeConverter>();
             var convertibleConverter = new ConvertibleConverter();
-            converters[typeof(int)] = convertibleConverter;
-            converters[typeof(List<>)] = new ListConverter();
+            Converters[typeof(int)] = convertibleConverter;
+            Converters[typeof(List<>)] = new ListConverter();
         }
 
 
-        public override void Apply(Deserializer deserializer, Saxon.Api.XdmItem xdmItem, Type type, ref object value)
+        public override void Apply(Deserializer deserializer, XdmItem xdmItem, Type type, ref object value)
         {
-            // Evaluate XPath
             var xdmValue = deserializer.XPathCompiler.Evaluate(xpath, xdmItem);
             if (xdmValue.Count == 0 && this.IsRequired)
             {
-                throw new XmlDeserializationException("Value is required but XPath query returned nothing");
-            }
-
-            if (xdmValue.Count > 1 && !typeof(IEnumerable).IsAssignableFrom(type))
-            {
-                throw new XmlDeserializationException("XPath returned more than one value");
+                throw new XmlDeserializationException("XPath query returned 0 results for required value.");
             }
         }
 
-        private XdmValue EvaluateXPath(XdmItem xdmItem)
+        private IItemAttributeConverter GetConverterForType(Type type)
         {
-            XPathSelector xPathSelector = xpathExecutable.Load();
-            xPathSelector.ContextItem = xdmItem;
-            return xPathSelector.Evaluate();
-        }
-
-        private IConverter GetConverterForType(Type type)
-        {
-            if (type == parser.TergetType)
+            if (type == this.converter)
             {
-                return new ParsableConverter(this.parser);
+                return this.CreateCustomConverterInstance();
             }
 
             if (type.IsDefined(typeof(DeserializableAttribute), false))
@@ -107,13 +80,26 @@ namespace XmlDeserializer
                 return new DeserializableConverter();
             }
 
-            IConverter converter;
-            if (converters.TryGetValue(type, out converter))
+            IItemAttributeConverter converterInstance;
+            if (Converters.TryGetValue(type, out converterInstance))
             {
-                return converter;
+                return converterInstance;
             }
 
-            throw new XmlDeserializationException("Type " + type + " is not supported");
+            throw new XmlDeserializationException("Type " + type + " is not supported.");
+        }
+
+        private IItemAttributeConverter CreateCustomConverterInstance()
+        {
+            try
+            {
+                return (IItemAttributeConverter)Activator.CreateInstance(this.converter);
+            }
+            catch (Exception e)
+            {
+                var message = "Type " + this.converter + " shoud have default constructor without parameters.";
+                throw new XmlDeserializationException(message, e);
+            }
         }
     }
 }
