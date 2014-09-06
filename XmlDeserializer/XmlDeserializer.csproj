@@ -43,11 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Converters\ConvertibleConverter.cs" />
-    <Compile Include="Converters\DeserializableConverter.cs" />
-    <Compile Include="Converters\ListConverter.cs" />
-    <Compile Include="Converters\ParsableConverter.cs" />
-    <Compile Include="Converters\IItemAttributeConverter.cs" />
+    <Compile Include="ItemAttributeConverters\ConvertibleConverter.cs" />
+    <Compile Include="ItemAttributeConverters\DeserializableConverter.cs" />
+    <Compile Include="ItemAttributeConverters\ListConverter.cs" />
+    <Compile Include="ItemAttributeConverters\ParsableConverter.cs" />
+    <Compile Include="ItemAttributeConverters\IItemAttributeConverter.cs" />
     <Compile Include="DeserializerExtensionsForItemAttribute.cs" />
     <Compile Include="Parsers\IParser.cs" />
     <Compile Include="Parsers\Parser{T}.cs" />
