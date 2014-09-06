@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace XmlDeserializer.AttributeHandlers
+namespace XmlDeserializer.Converters
 {
     using System.Reflection;
-    using System.Runtime.InteropServices;
 
     using Saxon.Api;
 
-    class DeserializableHandler : ItemAttributeHandler
+    using XmlDeserializer.Converter;
+
+    class DeserializableConverter : IConverter
     {
-        public override void HandleItem(Deserializer deserializer, XdmValue xdmValue, Attribute attribute, Type type, ref object deserializable)
+        public void HandleXPathResult(Deserializer deserializer, XdmValue xdmValue, Attribute attribute, Type type, ref object deserializable)
         {
             if (xdmValue.Count == 0)
             {
@@ -46,7 +47,7 @@ namespace XmlDeserializer.AttributeHandlers
             var deserializebleConstructors = constructors
                 .Where(constructor => constructor.IsDefined(typeof(DeserializableAttribute), false))
                 .ToArray();
-            
+
             if (deserializebleConstructors.Length > 1)
             {
                 throw new XmlDeserializationException("There is more than one constructor annotated with " + typeof(DeserializableAttribute));
@@ -86,9 +87,6 @@ namespace XmlDeserializer.AttributeHandlers
 
                 var peremeterValue = parameter.DefaultValue;
                 var attribute = attributes.Single();
-                var handler = deserializer.SupportedTypes.Get(parameter.ParameterType, attribute.GetType());
-                handler.Handle(deserializer, xdmNode, attribute, parameter.ParameterType, ref peremeterValue);
-                parameterValues.Add(peremeterValue);
             }
 
             return constructor.Invoke(parameterValues.ToArray());
@@ -116,9 +114,6 @@ namespace XmlDeserializer.AttributeHandlers
 
                 var fieldAttribute = attributes.Single();
                 object value = field.GetValue(deserializable);
-                var handler = deserializer.SupportedTypes.Get(field.FieldType, fieldAttribute.GetType());
-                handler.Handle(deserializer, xdmNode, fieldAttribute, field.FieldType, ref value);
-                field.SetValue(deserializable, value);
             }
         }
 
@@ -149,10 +144,12 @@ namespace XmlDeserializer.AttributeHandlers
 
                 var propertyAttribute = attributes.Single();
                 object value = property.GetValue(deserializable, null);
-                var handler = deserializer.SupportedTypes.Get(property.PropertyType, propertyAttribute.GetType());
-                handler.Handle(deserializer, xdmNode, propertyAttribute, property.PropertyType, ref value);
-                property.SetValue(deserializable, value, null);
             }
+        }
+
+        public void Convert(XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IConverter> getConverter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -13,8 +13,6 @@ namespace XmlDeserializer
 
     using Saxon.Api;
 
-    using XmlDeserializer.AttributeHandlers;
-
     public class Deserializer : IDeserializer
     {
         public Processor Processor { get; private set; }
@@ -22,8 +20,6 @@ namespace XmlDeserializer
         public DocumentBuilder DocumentBuilder { get; private set; }
 
         public XPathCompiler XPathCompiler { get; private set; }
-
-        public SupportedTypes SupportedTypes { get; private set; }
 
         public IFormatProvider FormatProvider { get; set; }
 
@@ -34,7 +30,6 @@ namespace XmlDeserializer
             this.Processor = new Processor();
             this.DocumentBuilder = this.Processor.NewDocumentBuilder();
             this.XPathCompiler = this.Processor.NewXPathCompiler();
-            this.SupportedTypes = new SupportedTypes();
         }
 
         public void Deserialize<T>(Uri uri, string xpath, ref T deserializable)
@@ -46,10 +41,13 @@ namespace XmlDeserializer
         public void Deserialize<T>(XdmNode xdmItem, string xpath, ref T deserializable)
         {
             var attribute = new ItemAttribute(xpath) { IsRequired = true };
-            IAttributeHandler attributeHandler = this.SupportedTypes.Get(typeof(T), attribute.GetType());
             object box = deserializable;
-            attributeHandler.Handle(this, xdmItem, attribute, typeof(T), ref box);
+            this.Deserialize(xdmItem, attribute, typeof(T), ref box);
             deserializable = (T)box;
+        }
+
+        internal void Deserialize(XdmNode xdmNode, XPathAttribute attribute, Type type, ref object deserializable)
+        {
         }
     }
 }

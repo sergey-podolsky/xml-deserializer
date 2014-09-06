@@ -17,5 +17,10 @@ namespace XmlDeserializer
             this.KeyXPath = keyXPath;
             this.ValueXPath = valueXPath;
         }
+
+        public override void Apply(Deserializer deserializer, Saxon.Api.XdmItem xdmItem, Type type, ref object value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

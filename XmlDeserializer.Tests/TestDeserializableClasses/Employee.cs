@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using XmlDeserializer.AttributeHandlers;
 
 namespace XmlDeserializer.Tests.TestDeserializableClasses
 {
@@ -34,7 +33,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public Privilege SystemPrivileges { get; set; }
 
         // bool value with custom converter
-        [Item(xpath: "contractor", Converter = typeof(YesNoBoolConverter))]
+        [Item(xpath: "contractor", Parser = typeof(YesNoBoolParser))]
         public bool IsContractor { get; set; }
 
         // nested class
@@ -102,9 +101,9 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
             Delete
         }
 
-        private class YesNoBoolConverter : CustomConverter<bool>
+        private class YesNoBoolParser : Parser<bool>
         {
-            public override bool Convert(string value)
+            public override bool Parse(string value)
             {
                 switch (value.ToLower())
                 {
