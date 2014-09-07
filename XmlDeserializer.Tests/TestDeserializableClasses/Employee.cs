@@ -13,11 +13,11 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
     internal class Employee
     {
         // mandatory value
-        [Item(xpath: "name", IsRequired = true)]
+        [Item(xpath: "name", isRequired: true)]
         public string Name { get; set; }
 
         // optional value with custom format
-        [Item(xpath: "birtday", Format = "dd-MM-yyyy")]
+        [Item(xpath: "birtday", format: "dd-MM-yyyy")]
         public DateTime? Birthday { get; set; }
 
         // default optional value
@@ -74,8 +74,8 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
 
             [Deserializable] // tells which constructor to use for instantiation
             public Address(
-                [Item(xpath: "@zip", IsRequired = true)] ulong zipCode,
-                [Item(xpath: "@country", IsRequired = true)] string country,
+                [Item(xpath: "@zip", isRequired: true)] ulong zipCode,
+                [Item(xpath: "@country", isRequired: true)] string country,
                 [Item(xpath: "@city")] string city,
                 [Item(xpath: "@street_address")] string streetAddress)
             {

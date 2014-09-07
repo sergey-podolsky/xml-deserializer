@@ -17,7 +17,7 @@ namespace XmlDeserializer
 
         public static void Deserialize<T>(this Deserializer deserializer, XdmNode xdmItem, string xpath, ref T deserializable)
         {
-            var itemAttribute = new ItemAttribute(xpath) { IsRequired = true };
+            var itemAttribute = new ItemAttribute(xpath, true);
             object box = deserializable;
             itemAttribute.Apply(deserializer, xdmItem, typeof(T), ref box);
             deserializable = (T)box;

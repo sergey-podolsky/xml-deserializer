@@ -22,7 +22,9 @@ namespace XmlDeserializer
 
         private Type converter;
 
-        public bool IsRequired { get; set; }
+        private bool isRequired;
+
+        private string[] format;
 
         public Type Converter
         {
@@ -42,12 +44,12 @@ namespace XmlDeserializer
                 }
             }
         }
-
-        public string Format { get; set; }
         
-        public ItemAttribute(string xpath)
+        public ItemAttribute(string xpath, bool isRequired = false, params string[] format)
         {
             this.xpath = xpath;
+            this.isRequired = isRequired;
+            this.format = format;
         }
 
         static ItemAttribute()
@@ -62,7 +64,7 @@ namespace XmlDeserializer
         public override void Apply(Deserializer deserializer, XdmItem xdmItem, Type type, ref object value)
         {
             var xdmValue = deserializer.XPathCompiler.Evaluate(xpath, xdmItem);
-            if (xdmValue.Count == 0 && this.IsRequired)
+            if (xdmValue.Count == 0 && this.isRequired)
             {
                 throw new XmlDeserializationException("XPath query returned 0 results for required value.");
             }
