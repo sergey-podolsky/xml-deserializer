@@ -154,7 +154,7 @@ namespace XmlDeserializer.Converters
             }
         }
 
-        public void Convert(XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IItemAttributeConverter> getConverter)
+        public void Convert(XdmValue xdmValue, Type type, ref object value, string[] format, Func<Type, IItemAttributeConverter> getConverter)
         {
             throw new NotImplementedException();
         }

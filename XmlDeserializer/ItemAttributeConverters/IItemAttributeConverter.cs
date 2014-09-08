@@ -15,7 +15,7 @@ namespace XmlDeserializer.Converter
             XdmValue xdmValue,
             Type type,
             ref object value,
-            string format,
+            string[] format,
             Func<Type, IItemAttributeConverter> getConverter);
     }
 }

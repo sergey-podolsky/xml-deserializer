@@ -9,12 +9,7 @@ namespace XmlDeserializer.Converters
 
     public class ConvertibleConverter : IItemAttributeConverter
     {
-        public void Convert(Saxon.Api.XdmValue xdmValue, ref object value, string format)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Convert(Saxon.Api.XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IItemAttributeConverter> getConverter)
+        public void Convert(Saxon.Api.XdmValue xdmValue, Type type, ref object value, string[] format, Func<Type, IItemAttributeConverter> getConverter)
         {
             throw new NotImplementedException();
         }

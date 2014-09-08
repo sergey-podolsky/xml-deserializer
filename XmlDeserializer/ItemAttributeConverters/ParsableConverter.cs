@@ -16,9 +16,9 @@ namespace XmlDeserializer.Converter
             this.parser = parser;
         }
 
-        public void Convert(Saxon.Api.XdmValue xdmValue, Type type, ref object value, string format, Func<Type, IItemAttributeConverter> getConverter)
+        public void Convert(Saxon.Api.XdmValue xdmValue, Type type, ref object value, string[] format, Func<Type, IItemAttributeConverter> getConverter)
         {
-            value = parser.Parse(xdmValue.Cast<string>().Single());
+            value = parser.Parse(xdmValue.Cast<string>().Single(), format);
         }
 
         public Type TargetType

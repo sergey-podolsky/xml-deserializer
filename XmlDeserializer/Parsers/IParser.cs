@@ -9,6 +9,6 @@ namespace XmlDeserializer.Parsers
     {
         Type TergetType { get; }
 
-        object Parse(string value);
+        object Parse(string value, string[] format);
     }
 }

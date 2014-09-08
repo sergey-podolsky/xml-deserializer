@@ -11,7 +11,7 @@ namespace XmlDeserializer
 
     public abstract class Parser<T> : IParser
     {
-        public abstract T Parse(string value);
+        public abstract T Parse(string value, string[] format);
 
         Type IParser.TergetType
         {
@@ -21,9 +21,9 @@ namespace XmlDeserializer
             }
         }
 
-        object IParser.Parse(string value)
+        object IParser.Parse(string value, string[] format)
         {
-            return this.Parse(value);
+            return this.Parse(value, format);
         }
     }
 }

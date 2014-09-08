@@ -103,7 +103,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
 
         private class YesNoBoolParser : Parser<bool>
         {
-            public override bool Parse(string value)
+            public override bool Parse(string value, string[] format)
             {
                 switch (value.ToLower())
                 {
