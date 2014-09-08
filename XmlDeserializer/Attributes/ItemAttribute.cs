@@ -20,7 +20,7 @@ namespace XmlDeserializer
 
         public static IDictionary<Type, IItemAttributeConverter> Converters { get; private set; }
 
-        private Type converter;
+        private Type converterType;
 
         private bool isRequired;
 
@@ -30,13 +30,13 @@ namespace XmlDeserializer
         {
             get
             {
-                return converter;
+                return converterType;
             }
             set
             {
                 if (typeof(IItemAttributeConverter).IsAssignableFrom(value))
                 {
-                    this.converter = value;
+                    this.converterType = value;
                 }
                 else
                 {
@@ -72,20 +72,20 @@ namespace XmlDeserializer
 
         private IItemAttributeConverter GetConverterForType(Type type)
         {
-            if (type == this.converter)
+            if (type == this.converterType)
             {
                 return this.CreateCustomConverterInstance();
             }
 
-            if (type.IsDefined(typeof(DeserializableAttribute), false))
+            IItemAttributeConverter converter;
+            if (Converters.TryGetValue(type, out converter))
             {
-                return new DeserializableConverter();
+                return converter;
             }
 
-            IItemAttributeConverter converterInstance;
-            if (Converters.TryGetValue(type, out converterInstance))
+            if (type.IsDefined(typeof(DeserializableAttribute), false))
             {
-                return converterInstance;
+                return Converters[type] = new DeserializableConverter(type);
             }
 
             throw new XmlDeserializationException("Type " + type + " is not supported.");
@@ -95,11 +95,11 @@ namespace XmlDeserializer
         {
             try
             {
-                return (IItemAttributeConverter)Activator.CreateInstance(this.converter);
+                return (IItemAttributeConverter)Activator.CreateInstance(this.converterType);
             }
             catch (Exception e)
             {
-                var message = "Type " + this.converter + " shoud have default constructor without parameters.";
+                var message = "Type " + this.converterType + " shoud have default constructor without parameters.";
                 throw new XmlDeserializationException(message, e);
             }
         }

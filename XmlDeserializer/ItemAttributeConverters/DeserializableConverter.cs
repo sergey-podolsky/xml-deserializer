@@ -13,6 +13,13 @@ namespace XmlDeserializer.Converters
 
     public class DeserializableConverter : IItemAttributeConverter
     {
+
+        public DeserializableConverter(Type targetType)
+        {
+            this.TargetType = targetType;
+            // Traverse members, cache attributes, comple xpathes
+        }
+
         public void HandleXPathResult(Deserializer deserializer, XdmValue xdmValue, Attribute attribute, Type type, ref object deserializable)
         {
             if (xdmValue.Count == 0)
@@ -152,9 +159,6 @@ namespace XmlDeserializer.Converters
             throw new NotImplementedException();
         }
 
-        public Type TargetType
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Type TargetType { get; private set; }
     }
 }
