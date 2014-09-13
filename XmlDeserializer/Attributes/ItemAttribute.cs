@@ -6,13 +6,13 @@ using System.Text;
 namespace XmlDeserializer
 {
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Security.Cryptography.X509Certificates;
 
     using Saxon.Api;
 
     using XmlDeserializer.Converter;
     using XmlDeserializer.Converters;
-    using XmlDeserializer.Parsers;
 
     public class ItemAttribute : XPathAttribute
     {
@@ -54,7 +54,7 @@ namespace XmlDeserializer
 
         static ItemAttribute()
         {
-            Converters = new Dictionary<Type, IItemAttributeConverter>();
+            Converters = new ConcurrentDictionary<Type, IItemAttributeConverter>();
             var convertibleConverter = new ConvertibleConverter();
             Converters[typeof(int)] = convertibleConverter;
             Converters[typeof(List<>)] = new ListConverter();

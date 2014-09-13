@@ -20,7 +20,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         [Item(xpath: "birtday", format: "dd-MM-yyyy")]
         public DateTime? Birthday { get; set; }
 
-        // default optional value
+        // default optional value idiom
         [Item(xpath: "(birthplace, 'Unknown')[1]")]
         public string Birthplace { get; set; }
 
@@ -103,16 +103,18 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
 
         private class YesNoBoolParser : Parser<bool>
         {
-            public override bool Parse(string value, string[] format)
+            protected override void Parse(string input, ref bool output, string[] format)
             {
-                switch (value.ToLower())
+                switch (input.ToLower())
                 {
                     case "yes":
-                        return true;
+                        output = true;
+                        break;
                     case "no":
-                        return false;
+                        output = false;
+                        break;
                     default:
-                        throw new Exception("Expected 'yes'/'no' value, but was " + value);
+                        throw new ArgumentException("Expected 'yes' or 'no' value, but was " + output);
                 }
             }
         }
