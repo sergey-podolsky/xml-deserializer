@@ -30,6 +30,7 @@ namespace XmlDeserializer
             this.Processor = new Processor();
             this.DocumentBuilder = this.Processor.NewDocumentBuilder();
             this.XPathCompiler = this.Processor.NewXPathCompiler();
+            this.XPathCompiler.Caching = true;
         }
     }
 }

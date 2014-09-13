@@ -12,6 +12,7 @@ namespace XmlDeserializer.Converter
         Type TargetType { get; }
 
         void Convert(
+            Deserializer deserializer,
             XdmValue xdmValue,
             Type type,
             ref object value,

@@ -43,9 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemAttributeConverters\ConvertibleConverter.cs" />
     <Compile Include="ItemAttributeConverters\DeserializableConverter.cs" />
-    <Compile Include="ItemAttributeConverters\ListConverter.cs" />
     <Compile Include="ItemAttributeConverters\IItemAttributeConverter.cs" />
     <Compile Include="DeserializerExtensionsForItemAttribute.cs" />
     <Compile Include="ItemAttributeConverters\Parser{T}.cs" />

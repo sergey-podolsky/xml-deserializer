@@ -55,9 +55,6 @@ namespace XmlDeserializer
         static ItemAttribute()
         {
             Converters = new ConcurrentDictionary<Type, IItemAttributeConverter>();
-            var convertibleConverter = new ConvertibleConverter();
-            Converters[typeof(int)] = convertibleConverter;
-            Converters[typeof(List<>)] = new ListConverter();
         }
 
 

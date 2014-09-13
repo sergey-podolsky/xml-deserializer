@@ -5,6 +5,7 @@ using System.Text;
 
 namespace XmlDeserializer.Converters
 {
+    using System.Collections.ObjectModel;
     using System.Reflection;
 
     using Saxon.Api;
@@ -13,39 +14,104 @@ namespace XmlDeserializer.Converters
 
     public class DeserializableConverter : IItemAttributeConverter
     {
+        private interface IMember
+        {
+            void Deserialize(Deserializer deserializer, XdmItem xdmItem, object obj);
+        }
+
+        private sealed class Field : IMember
+        {
+            public FieldInfo FieldInfo { get; private set; }
+            public ReadOnlyCollection<XPathAttribute> XPathAttributes { get; private set; }
+
+            public Field(FieldInfo fieldInfo, ReadOnlyCollection<XPathAttribute> attributes)
+            {
+                this.FieldInfo = fieldInfo;
+                this.XPathAttributes = attributes;
+            }
+
+            public void Deserialize(Deserializer deserializer, XdmItem xdmItem, object obj)
+            {
+                try
+                {
+                    object fieldValue = this.FieldInfo.GetValue(obj);
+                    foreach (var xpathAttribute in this.XPathAttributes)
+                    {
+                        xpathAttribute.Apply(deserializer, xdmItem, this.FieldInfo.FieldType, ref fieldValue);
+                    }
+                }
+                catch (Exception e)
+                {
+                    var message = "Failed to deserialize field with name " + this.FieldInfo.Name;
+                    throw new XmlDeserializationException(message, e);
+                }
+            }
+        }
+
+        private sealed class Property : IMember
+        {
+            public PropertyInfo PropertyInfo { get; private set; }
+
+            public ReadOnlyCollection<XPathAttribute> XPathAttributes { get; private set; }
+
+            public Property(PropertyInfo propertyInfo, ReadOnlyCollection<XPathAttribute> attributes)
+            {
+                if (propertyInfo.GetSetMethod(false) == null)
+                {
+                    var message = "Property with name " + propertyInfo.Name + " does not have set method.";
+                    throw new XmlDeserializationException(message);
+                }
+
+                this.PropertyInfo = propertyInfo;
+                this.XPathAttributes = attributes;
+            }
+
+            public void Deserialize(Deserializer deserializer, XdmItem xdmItem, object obj)
+            {
+                try
+                {
+                    object propertyValue = this.PropertyInfo.GetValue(obj, null);
+                    foreach (var xpathAttribute in this.XPathAttributes)
+                    {
+                        xpathAttribute.Apply(deserializer, xdmItem, this.PropertyInfo.PropertyType, ref propertyValue);
+                    }
+                    this.PropertyInfo.SetValue(obj, propertyValue, null);
+                }
+                catch (Exception e)
+                {
+                    var message = "Failed to deserialize property with name " + this.PropertyInfo.Name;
+                    throw new XmlDeserializationException(message, e);
+                }
+            }
+        }
+
+        private readonly List<IMember> members = new List<IMember>();
+
+        private readonly Lazy<ConstructorInfo> constructorInfo;
 
         public DeserializableConverter(Type targetType)
         {
             this.TargetType = targetType;
-            // Traverse members, cache attributes, comple xpathes
+
+            var fields = from FieldInfo fieldInfo in targetType.GetFields()
+                         let xpathAttributes = fieldInfo.GetCustomAttributes(false).OfType<XPathAttribute>()
+                         where xpathAttributes.Any()
+                         select new Field(fieldInfo, xpathAttributes.ToList().AsReadOnly());
+
+            var properties = from PropertyInfo propertyInfo in targetType.GetProperties()
+                             let xpathAttributes = propertyInfo.GetCustomAttributes(false).OfType<XPathAttribute>()
+                             where xpathAttributes.Any()
+                             select new Property(propertyInfo, xpathAttributes.ToList().AsReadOnly());
+
+            this.members.AddRange(fields.Cast<IMember>());
+            this.members.AddRange(properties.Cast<IMember>());
+
+            this.constructorInfo = new Lazy<ConstructorInfo>(this.GetConstructor);
         }
 
-        public void HandleXPathResult(Deserializer deserializer, XdmValue xdmValue, Attribute attribute, Type type, ref object deserializable)
+        private ConstructorInfo GetConstructor()
         {
-            if (xdmValue.Count == 0)
-            {
-                return;
-            }
-
-            var xdmNode = xdmValue as XdmNode;
-            if (xdmNode == null)
-            {
-                throw new XmlDeserializationException("XPath query returned invalid result " + xdmValue);
-            }
-
-            if (deserializable == null)
-            {
-                var constructor = GetConstructor(type);
-                deserializable = InvokeConstructor(deserializer, xdmNode, constructor);
-            }
-
-            DeserializeFields(deserializer, xdmNode, deserializable);
-            DeserializeProperties(deserializer, xdmNode, deserializable);
-        }
-
-        private static ConstructorInfo GetConstructor(Type type)
-        {
-            var constructors = type.GetConstructors();
+            var constructors = this.TargetType.GetConstructors();
             if (constructors.Length == 0)
             {
                 throw new XmlDeserializationException("Type does not contain constructors");
@@ -74,89 +140,45 @@ namespace XmlDeserializer.Converters
             throw new XmlDeserializationException("There is no default constructor or constructor annotated with " + typeof(DeserializableAttribute));
         }
 
-        private static object InvokeConstructor(Deserializer deserializer, XdmNode xdmNode, ConstructorInfo constructor)
+        private object InvokeConstructor(Deserializer deserializer, XdmNode xdmNode)
         {
-            var parameters = constructor.GetParameters();
+            var parameters = this.constructorInfo.Value.GetParameters();
             var parameterValues = new List<object>(parameters.Length);
             foreach (var parameter in parameters)
             {
-                var attributes = parameter.GetCustomAttributes(false).OfType<XPathAttribute>().ToArray();
-                if (attributes.Length == 0)
+                object parameterValue = parameter.DefaultValue;
+                var xpathAttributes = parameter.GetCustomAttributes(false).OfType<XPathAttribute>();
+                foreach (var xpathAttribute in xpathAttributes)
                 {
-                    parameterValues.Add(null);
+                    xpathAttribute.Apply(deserializer, xdmNode, parameter.GetType(), ref parameterValue);
                 }
-
-                if (attributes.Length > 1)
-                {
-                    var error = "Constructor parameter is annotated with nore than one attribute deriving from " + typeof(XPathAttribute);
-                    throw new XmlDeserializationException(error);
-                }
-
-                var peremeterValue = parameter.DefaultValue;
-                var attribute = attributes.Single();
+                parameterValues.Add(parameterValue);
             }
-
-            return constructor.Invoke(parameterValues.ToArray());
+            return this.constructorInfo.Value.Invoke(parameterValues.ToArray());
         }
 
-
-        private static void DeserializeFields(Deserializer deserializer, XdmNode xdmNode, object deserializable)
+        public void Convert(Deserializer deserializer, XdmValue xdmValue, Type type, ref object value, string[] format, Func<Type, IItemAttributeConverter> getConverter)
         {
-            var fields = deserializable.GetType()
-                .GetFields()
-                .Where(field => field.IsDefined(typeof(XPathAttribute), false))
-                .ToArray();
-
-            foreach (var field in fields)
+            if (xdmValue.Count == 0)
             {
-                var attributes = field.GetCustomAttributes(false).OfType<XPathAttribute>().ToArray();
-                if (attributes.Length > 1)
-                {
-                    var error = string.Format(
-                        "Field '{0}' is annotated with more than one attribute deriving from {1}",
-                        field.Name,
-                        typeof(XPathAttribute));
-                    throw new XmlDeserializationException(error);
-                }
-
-                var fieldAttribute = attributes.Single();
-                object value = field.GetValue(deserializable);
+                return;
             }
-        }
 
-        private static void DeserializeProperties(Deserializer deserializer, XdmNode xdmNode, object deserializable)
-        {
-            var properties = deserializable
-                .GetType()
-                .GetProperties()
-                .Where(property => property.IsDefined(typeof(XPathAttribute), false))
-                .ToArray();
-
-            foreach (var property in properties)
+            var xdmNode = xdmValue as XdmNode;
+            if (xdmNode == null)
             {
-                if (!property.CanWrite)
-                {
-                    throw new XmlDeserializationException("Property " + property.Name + " can not write");
-                }
-
-                var attributes = property.GetCustomAttributes(false).OfType<XPathAttribute>().ToArray();
-                if (attributes.Length > 1)
-                {
-                    var error = string.Format(
-                        "Property '{0}' is annotated with more than one attribute deriving from {1}",
-                        property.Name,
-                        typeof(XPathAttribute));
-                    throw new XmlDeserializationException(error);
-                }
-
-                var propertyAttribute = attributes.Single();
-                object value = property.GetValue(deserializable, null);
+                throw new XmlDeserializationException("XPath query returned invalid result " + xdmValue);
             }
-        }
 
-        public void Convert(XdmValue xdmValue, Type type, ref object value, string[] format, Func<Type, IItemAttributeConverter> getConverter)
-        {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                value = InvokeConstructor(deserializer, xdmNode);
+            }
+
+            foreach (var member in this.members)
+            {
+                member.Deserialize(deserializer, xdmNode, value);
+            }
         }
 
         public Type TargetType { get; private set; }
