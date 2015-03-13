@@ -33,7 +33,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public Privilege SystemPrivileges { get; set; }
 
         // bool value with custom converter
-        [Item(xpath: "contractor", Converter = typeof(YesNoBoolParser))]
+        [Item(xpath: "contractor", Converter = typeof(YesNoBoolConverter))] 
         public bool IsContractor { get; set; }
 
         // nested class
@@ -101,9 +101,9 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
             Delete
         }
 
-        private class YesNoBoolParser : Parser<bool>
+        private class YesNoBoolConverter : FormattedConverter<bool>
         {
-            protected override void Parse(string input, ref bool output, string[] format)
+            protected override void Convert(string input, ref bool output, string[] format)
             {
                 switch (input.ToLower())
                 {

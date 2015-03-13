@@ -7,9 +7,9 @@ namespace XmlDeserializer
 {
     using Saxon.Api;
 
-    public abstract class Parser<T>
+    public abstract class FormattedConverter<T>
     {
-        protected abstract void Parse(string input, ref T output, string[] format);
+        protected abstract void Convert(string input, ref T output, string[] format);
 
         Type TergetType
         {
