@@ -46,7 +46,7 @@
     <Compile Include="ItemAttributeConverters\DeserializableConverter.cs" />
     <Compile Include="ItemAttributeConverters\IItemAttributeConverter.cs" />
     <Compile Include="DeserializerExtensionsForItemAttribute.cs" />
-    <Compile Include="ItemAttributeConverters\Parser{T}.cs" />
+    <Compile Include="ItemAttributeConverters\FormattedConverter{T}.cs" />
     <Compile Include="Attributes\AbstractDictionaryAttribute.cs" />
     <Compile Include="Attributes\DeserializableAttribute.cs" />
     <Compile Include="Deserializer.cs" />
