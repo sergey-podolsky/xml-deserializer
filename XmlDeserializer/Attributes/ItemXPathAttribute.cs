@@ -20,7 +20,7 @@ namespace XmlDeserializer
         private Type converterType;
         public static IDictionary<Type, IItemAttributeConverter> Converters { get; private set; }
         public bool IsOptional { get; set; }
-        public string[] Format;
+        public string Format;
 
         public Type Converter
         {

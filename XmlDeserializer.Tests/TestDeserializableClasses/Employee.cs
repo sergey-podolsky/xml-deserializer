@@ -17,7 +17,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public string Name { get; set; }
 
         // optional value with custom format
-        [ItemXPath("birtday", Format = new[] {"dd-MM-yyyy"})]
+        [ItemXPath("birtday", Format = "dd-MM-yyyy")]
         public DateTime? Birthday { get; set; }
 
         // default optional value idiom
