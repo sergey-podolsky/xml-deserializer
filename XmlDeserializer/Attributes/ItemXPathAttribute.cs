@@ -17,14 +17,10 @@ namespace XmlDeserializer
     public class ItemXPathAttribute : AbstractXPathAttribute
     {
         private readonly string xpath;
-
-        public static IDictionary<Type, IItemAttributeConverter> Converters { get; private set; }
-
         private Type converterType;
-
-        private bool isRequired;
-
-        private string[] format;
+        public static IDictionary<Type, IItemAttributeConverter> Converters { get; private set; }
+        public bool IsOptional { get; set; }
+        public string[] Format;
 
         public Type Converter
         {
@@ -45,11 +41,9 @@ namespace XmlDeserializer
             }
         }
         
-        public ItemXPathAttribute(string xpath, bool isRequired = false, params string[] format)
+        public ItemXPathAttribute(string xpath)
         {
             this.xpath = xpath;
-            this.isRequired = isRequired;
-            this.format = format;
         }
 
         static ItemXPathAttribute()
@@ -61,9 +55,9 @@ namespace XmlDeserializer
         public override void Apply(Deserializer deserializer, XdmItem xdmItem, Type type, ref object value)
         {
             var xdmValue = deserializer.XPathCompiler.Evaluate(xpath, xdmItem);
-            if (xdmValue.Count == 0 && this.isRequired)
+            if (xdmValue.Count == 0 && !this.IsOptional)
             {
-                throw new XmlDeserializationException("XPath query returned 0 results for required value.");
+                throw new XmlDeserializationException("XPath query returned 0 results for non-optional value.");
             }
         }
 

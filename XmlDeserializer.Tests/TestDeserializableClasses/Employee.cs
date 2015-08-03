@@ -13,39 +13,39 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
     internal class Employee
     {
         // mandatory value
-        [ItemXPath(xpath: "name", isRequired: true)]
+        [ItemXPath("name", IsOptional = true)]
         public string Name { get; set; }
 
         // optional value with custom format
-        [ItemXPath(xpath: "birtday", format: "dd-MM-yyyy")]
+        [ItemXPath("birtday", Format = new[] {"dd-MM-yyyy"})]
         public DateTime? Birthday { get; set; }
 
         // default optional value idiom
-        [ItemXPath(xpath: "(birthplace, 'Unknown')[1]")]
+        [ItemXPath("(birthplace, 'Unknown')[1]")]
         public string Birthplace { get; set; }
 
         // enum
-        [ItemXPath(xpath: "gender")]
+        [ItemXPath("gender")]
         public Sex Gender { get; set; }
 
         // enum flags
-        [ItemXPath(xpath: "system_privileges/privilege")]
+        [ItemXPath("system_privileges/privilege")]
         public Privilege SystemPrivileges { get; set; }
 
         // bool value with custom converter
-        [ItemXPath(xpath: "contractor", Converter = typeof(YesNoBoolConverter))] 
+        [ItemXPath("contractor", Converter = typeof(YesNoBoolConverter))] 
         public bool IsContractor { get; set; }
 
         // nested class
-        [ItemXPath(xpath: "mailing_address")]
+        [ItemXPath("mailing_address")]
         public Address MailingAddress { get; set; }
 
         // collection (can be empty)
-        [ItemXPath(xpath: "subordinates/subordinate")]
+        [ItemXPath("subordinates/subordinate")]
         public ICollection<Employee> Subordinates { get; set; }
 
         // value from another XML with URI that can be retrieved from current XML by given XPath
-        [ItemXPath(xpath: "//employee", XmlUriXPath = "line_manager/@link")]
+        [ItemXPath("//employee", XmlUriXPath = "line_manager/@link")]
         public Employee LineManager { get; set; }
 
         // dictionary with non-null values
@@ -74,10 +74,10 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
 
             [Deserializable] // tells which constructor to use for instantiation
             public Address(
-                [ItemXPath(xpath: "@zip", isRequired: true)] ulong zipCode,
-                [ItemXPath(xpath: "@country", isRequired: true)] string country,
-                [ItemXPath(xpath: "@city")] string city,
-                [ItemXPath(xpath: "@street_address")] string streetAddress)
+                [ItemXPath("@zip")] ulong zipCode,
+                [ItemXPath("@country", IsOptional = true)] string country,
+                [ItemXPath("@city")] string city,
+                [ItemXPath("@street_address")] string streetAddress)
             {
                 this.ZipCode = zipCode;
                 this.Country = country;
