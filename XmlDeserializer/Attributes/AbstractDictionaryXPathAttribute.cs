@@ -5,7 +5,7 @@ using System.Text;
 
 namespace XmlDeserializer
 {
-    public abstract class AbstractDictionaryAttribute : XPathAttribute
+    public abstract class AbstractDictionaryXPathAttribute : AbstractXPathAttribute
     {
         public string KeyFormat { get; set; }
         public string ValueFormat { get; set; }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace XmlDeserializer
 {
-    public class InlineCollectionAttribute : ItemAttribute
+    public class InlineCollectionAttribute : ItemXPathAttribute
     {
         public string Separator { get; private set; }
 

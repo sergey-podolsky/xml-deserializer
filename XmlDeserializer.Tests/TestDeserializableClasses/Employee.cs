@@ -13,47 +13,47 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
     internal class Employee
     {
         // mandatory value
-        [Item(xpath: "name", isRequired: true)]
+        [ItemXPath(xpath: "name", isRequired: true)]
         public string Name { get; set; }
 
         // optional value with custom format
-        [Item(xpath: "birtday", format: "dd-MM-yyyy")]
+        [ItemXPath(xpath: "birtday", format: "dd-MM-yyyy")]
         public DateTime? Birthday { get; set; }
 
         // default optional value idiom
-        [Item(xpath: "(birthplace, 'Unknown')[1]")]
+        [ItemXPath(xpath: "(birthplace, 'Unknown')[1]")]
         public string Birthplace { get; set; }
 
         // enum
-        [Item(xpath: "gender")]
+        [ItemXPath(xpath: "gender")]
         public Sex Gender { get; set; }
 
         // enum flags
-        [Item(xpath: "system_privileges/privilege")]
+        [ItemXPath(xpath: "system_privileges/privilege")]
         public Privilege SystemPrivileges { get; set; }
 
         // bool value with custom converter
-        [Item(xpath: "contractor", Converter = typeof(YesNoBoolConverter))] 
+        [ItemXPath(xpath: "contractor", Converter = typeof(YesNoBoolConverter))] 
         public bool IsContractor { get; set; }
 
         // nested class
-        [Item(xpath: "mailing_address")]
+        [ItemXPath(xpath: "mailing_address")]
         public Address MailingAddress { get; set; }
 
         // collection (can be empty)
-        [Item(xpath: "subordinates/subordinate")]
+        [ItemXPath(xpath: "subordinates/subordinate")]
         public ICollection<Employee> Subordinates { get; set; }
 
         // value from another XML with URI that can be retrieved from current XML by given XPath
-        [Item(xpath: "//employee", XmlUriXPath = "line_manager/@link")]
+        [ItemXPath(xpath: "//employee", XmlUriXPath = "line_manager/@link")]
         public Employee LineManager { get; set; }
 
         // dictionary with non-null values
-        [Dictionary(entryXPath: "contact_info/*", keyXPath: "name()", valueXPath: ".", IsValueRequired = true)]
+        [DictionaryXPaths(entryXPath: "contact_info/*", keyXPath: "name()", valueXPath: ".", IsValueRequired = true)]
         public Dictionary<string, string> ContactInfo { get; set; }
 
         // dictionary where values are non-empty lists
-        [Dictionary(entryXPath: "skills/*", keyXPath: "name()", valueXPath: "@*/concat(name(), ': ', ., ' year(s)')", IsValueRequired = true)]
+        [DictionaryXPaths(entryXPath: "skills/*", keyXPath: "name()", valueXPath: "@*/concat(name(), ': ', ., ' year(s)')", IsValueRequired = true)]
         public Dictionary<string, List<string>> Skills { get; set; }
 
         // collection of comma separated values
@@ -61,7 +61,7 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
         public string[] SpokenLanguages { get; set; }
 
         // dictionary of semicolon separated entries
-        [InlineDictionary(xpath: "personal_details", entrySeparator: @"\s*;\s*", keyValueSeparator: @"\s*=\s*")]
+        [InlineDictionaryXPath(xpath: "personal_details", entrySeparator: @"\s*;\s*", keyValueSeparator: @"\s*=\s*")]
         public IDictionary<string, string> PersonalDetails { get; set; }
 
         [Deserializable]
@@ -74,10 +74,10 @@ namespace XmlDeserializer.Tests.TestDeserializableClasses
 
             [Deserializable] // tells which constructor to use for instantiation
             public Address(
-                [Item(xpath: "@zip", isRequired: true)] ulong zipCode,
-                [Item(xpath: "@country", isRequired: true)] string country,
-                [Item(xpath: "@city")] string city,
-                [Item(xpath: "@street_address")] string streetAddress)
+                [ItemXPath(xpath: "@zip", isRequired: true)] ulong zipCode,
+                [ItemXPath(xpath: "@country", isRequired: true)] string country,
+                [ItemXPath(xpath: "@city")] string city,
+                [ItemXPath(xpath: "@street_address")] string streetAddress)
             {
                 this.ZipCode = zipCode;
                 this.Country = country;

@@ -14,7 +14,7 @@ namespace XmlDeserializer
     using XmlDeserializer.Converter;
     using XmlDeserializer.Converters;
 
-    public class ItemAttribute : XPathAttribute
+    public class ItemXPathAttribute : AbstractXPathAttribute
     {
         private readonly string xpath;
 
@@ -45,14 +45,14 @@ namespace XmlDeserializer
             }
         }
         
-        public ItemAttribute(string xpath, bool isRequired = false, params string[] format)
+        public ItemXPathAttribute(string xpath, bool isRequired = false, params string[] format)
         {
             this.xpath = xpath;
             this.isRequired = isRequired;
             this.format = format;
         }
 
-        static ItemAttribute()
+        static ItemXPathAttribute()
         {
             Converters = new ConcurrentDictionary<Type, IItemAttributeConverter>();
         }

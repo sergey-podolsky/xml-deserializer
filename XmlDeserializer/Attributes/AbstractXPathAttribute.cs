@@ -11,7 +11,7 @@ namespace XmlDeserializer
         validOn: AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter,
         AllowMultiple = false,
         Inherited = false)]
-    public abstract class XPathAttribute : Attribute
+    public abstract class AbstractXPathAttribute : Attribute
     {
         public string XmlUriXPath { get; set; }
 

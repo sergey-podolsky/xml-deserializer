@@ -5,13 +5,13 @@ using System.Text;
 
 namespace XmlDeserializer
 {
-    public class DictionaryAttribute : AbstractDictionaryAttribute
+    public class DictionaryXPathsAttribute : AbstractDictionaryXPathAttribute
     {
         public string EntryXPath { get; private set; }
         public string KeyXPath { get; private set; }
         public string ValueXPath { get; set; }
 
-        public DictionaryAttribute(string entryXPath, string keyXPath, string valueXPath)
+        public DictionaryXPathsAttribute(string entryXPath, string keyXPath, string valueXPath)
         {
             this.EntryXPath = entryXPath;
             this.KeyXPath = keyXPath;

@@ -22,9 +22,9 @@ namespace XmlDeserializer.Converters
         private sealed class Field : IMember
         {
             public FieldInfo FieldInfo { get; private set; }
-            public ReadOnlyCollection<XPathAttribute> XPathAttributes { get; private set; }
+            public ReadOnlyCollection<AbstractXPathAttribute> XPathAttributes { get; private set; }
 
-            public Field(FieldInfo fieldInfo, ReadOnlyCollection<XPathAttribute> attributes)
+            public Field(FieldInfo fieldInfo, ReadOnlyCollection<AbstractXPathAttribute> attributes)
             {
                 this.FieldInfo = fieldInfo;
                 this.XPathAttributes = attributes;
@@ -52,9 +52,9 @@ namespace XmlDeserializer.Converters
         {
             public PropertyInfo PropertyInfo { get; private set; }
 
-            public ReadOnlyCollection<XPathAttribute> XPathAttributes { get; private set; }
+            public ReadOnlyCollection<AbstractXPathAttribute> XPathAttributes { get; private set; }
 
-            public Property(PropertyInfo propertyInfo, ReadOnlyCollection<XPathAttribute> attributes)
+            public Property(PropertyInfo propertyInfo, ReadOnlyCollection<AbstractXPathAttribute> attributes)
             {
                 if (propertyInfo.GetSetMethod(false) == null)
                 {
@@ -94,12 +94,12 @@ namespace XmlDeserializer.Converters
             this.TargetType = targetType;
 
             var fields = from FieldInfo fieldInfo in targetType.GetFields()
-                         let xpathAttributes = fieldInfo.GetCustomAttributes(false).OfType<XPathAttribute>()
+                         let xpathAttributes = fieldInfo.GetCustomAttributes(false).OfType<AbstractXPathAttribute>()
                          where xpathAttributes.Any()
                          select new Field(fieldInfo, xpathAttributes.ToList().AsReadOnly());
 
             var properties = from PropertyInfo propertyInfo in targetType.GetProperties()
-                             let xpathAttributes = propertyInfo.GetCustomAttributes(false).OfType<XPathAttribute>()
+                             let xpathAttributes = propertyInfo.GetCustomAttributes(false).OfType<AbstractXPathAttribute>()
                              where xpathAttributes.Any()
                              select new Property(propertyInfo, xpathAttributes.ToList().AsReadOnly());
 
@@ -147,7 +147,7 @@ namespace XmlDeserializer.Converters
             foreach (var parameter in parameters)
             {
                 object parameterValue = parameter.DefaultValue;
-                var xpathAttributes = parameter.GetCustomAttributes(false).OfType<XPathAttribute>();
+                var xpathAttributes = parameter.GetCustomAttributes(false).OfType<AbstractXPathAttribute>();
                 foreach (var xpathAttribute in xpathAttributes)
                 {
                     xpathAttribute.Apply(deserializer, xdmNode, parameter.GetType(), ref parameterValue);
